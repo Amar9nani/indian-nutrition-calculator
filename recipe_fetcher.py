@@ -1,0 +1,206 @@
+import os
+import logging
+import json
+from typing import Dict, Any, Optional
+
+from openai import OpenAI
+
+logger = logging.getLogger(__name__)
+
+class RecipeFetcher:
+    """Class to fetch recipes using OpenAI API"""
+    
+    def __init__(self):
+        """Initialize the recipe fetcher with API credentials"""
+        self.api_key = os.environ.get("OPENAI_API_KEY")
+        if not self.api_key:
+            logger.warning("OpenAI API key not found, using fallback data")
+        self.client = OpenAI(api_key=self.api_key) if self.api_key else None
+        
+    def fetch_recipe(self, dish_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Fetch recipe for a given dish name
+        
+        Args:
+            dish_name: Name of the Indian dish
+            
+        Returns:
+            Dictionary with recipe data or None if fetch failed
+        """
+        if not self.client:
+            # Fallback to sample data if API not available
+            return self._get_sample_recipe(dish_name)
+            
+        try:
+            # Use OpenAI API to fetch recipe
+            prompt = f"""
+            I need a detailed traditional Indian recipe for "{dish_name}". 
+            
+            Return ONLY a JSON object with these fields:
+            1. "ingredients": array of objects with "name" and "quantity" 
+               (name should be the base ingredient, quantity should be in household measurements like cups, tablespoons)
+            2. "cooking_method": brief description of preparation method
+            
+            Example format:
+            {{
+              "ingredients": [
+                {{"name": "paneer", "quantity": "250g"}},
+                {{"name": "tomato", "quantity": "2 medium"}}
+              ],
+              "cooking_method": "sauté onions, add spices, simmer with tomatoes, add paneer"
+            }}
+            
+            The recipe should be authentic and include all necessary ingredients with approximate quantities.
+            Do not include substitutes or variations. Focus on standard ingredients for this dish.
+            """
+            
+            # the newest OpenAI model is "gpt-4o" which was released May 13, 2024.
+            # do not change this unless explicitly requested by the user
+            response = self.client.chat.completions.create(
+                model="gpt-4o",
+                messages=[{"role": "user", "content": prompt}],
+                response_format={"type": "json_object"},
+                temperature=0.7,
+            )
+            
+            result = json.loads(response.choices[0].message.content)
+            
+            # Validate response structure
+            if not result.get('ingredients'):
+                logger.error(f"Invalid recipe structure received for {dish_name}")
+                return self._get_sample_recipe(dish_name)
+                
+            return result
+            
+        except Exception as e:
+            logger.error(f"Error fetching recipe from OpenAI: {str(e)}")
+            return self._get_sample_recipe(dish_name)
+    
+    def _get_sample_recipe(self, dish_name: str) -> Dict[str, Any]:
+        """Fallback method to return sample recipes for common dishes"""
+        dish_name_lower = dish_name.lower()
+        
+        # Sample recipes for common Indian dishes
+        if 'paneer butter masala' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Paneer", "quantity": "250g"},
+                    {"name": "Butter", "quantity": "2 tablespoons"},
+                    {"name": "Tomato", "quantity": "3 medium"},
+                    {"name": "Onion", "quantity": "1 large"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "4 cloves"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Cashew Nuts", "quantity": "10"},
+                    {"name": "Cream", "quantity": "2 tablespoons"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Sugar", "quantity": "1/2 teaspoon"},
+                    {"name": "Oil", "quantity": "1 tablespoon"}
+                ],
+                "cooking_method": "Sauté onions, add ginger-garlic paste, tomatoes, spices. Blend to make gravy. Add butter, cream and paneer cubes."
+            }
+        elif 'dal makhani' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Black Gram Lentils", "quantity": "1 cup"},
+                    {"name": "Kidney Beans", "quantity": "1/4 cup"},
+                    {"name": "Butter", "quantity": "3 tablespoons"},
+                    {"name": "Cream", "quantity": "2 tablespoons"},
+                    {"name": "Onion", "quantity": "1 medium"},
+                    {"name": "Tomato", "quantity": "2 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "4 cloves"},
+                    {"name": "Green Chilli", "quantity": "1"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"}
+                ],
+                "cooking_method": "Soak and pressure cook lentils and beans. Sauté cumin seeds, onions, ginger-garlic. Add tomatoes, spices, cooked lentils, butter, and cream."
+            }
+        elif 'chicken curry' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Chicken", "quantity": "500g"},
+                    {"name": "Onion", "quantity": "2 medium"},
+                    {"name": "Tomato", "quantity": "2 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "5 cloves"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Oil", "quantity": "3 tablespoons"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Coriander Powder", "quantity": "1 tablespoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Coriander Leaves", "quantity": "2 tablespoons"}
+                ],
+                "cooking_method": "Marinate chicken with spices. Sauté onions, ginger-garlic paste, add tomatoes and spices. Add chicken and cook until tender."
+            }
+        elif 'aloo gobi' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Potato", "quantity": "2 medium"},
+                    {"name": "Cauliflower", "quantity": "1 small"},
+                    {"name": "Onion", "quantity": "1 medium"},
+                    {"name": "Tomato", "quantity": "1 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "3 cloves"},
+                    {"name": "Green Chilli", "quantity": "1"},
+                    {"name": "Oil", "quantity": "2 tablespoons"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Coriander Powder", "quantity": "1 tablespoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1/2 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Coriander Leaves", "quantity": "1 tablespoon"}
+                ],
+                "cooking_method": "Sauté cumin seeds, onions, add ginger-garlic, tomatoes, spices, potatoes and cauliflower florets. Cover and cook till vegetables are tender."
+            }
+        elif 'biryani' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Basmati Rice", "quantity": "2 cups"},
+                    {"name": "Chicken", "quantity": "500g"},
+                    {"name": "Onion", "quantity": "2 large"},
+                    {"name": "Tomato", "quantity": "1 medium"},
+                    {"name": "Yogurt", "quantity": "1/2 cup"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "6 cloves"},
+                    {"name": "Green Chilli", "quantity": "3"},
+                    {"name": "Ghee", "quantity": "3 tablespoons"},
+                    {"name": "Biryani Masala", "quantity": "2 tablespoons"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Coriander Leaves", "quantity": "1/4 cup"},
+                    {"name": "Mint Leaves", "quantity": "1/4 cup"},
+                    {"name": "Salt", "quantity": "to taste"}
+                ],
+                "cooking_method": "Marinate chicken with yogurt and spices. Cook rice separately. Layer rice and chicken masala, dum cook on low heat."
+            }
+        else:
+            # Generic recipe for unknown dishes
+            return {
+                "ingredients": [
+                    {"name": "Main Ingredient", "quantity": "250g"},
+                    {"name": "Onion", "quantity": "1 medium"},
+                    {"name": "Tomato", "quantity": "1 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "3 cloves"},
+                    {"name": "Green Chilli", "quantity": "1"},
+                    {"name": "Oil", "quantity": "2 tablespoons"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Coriander Powder", "quantity": "1 tablespoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1/2 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Coriander Leaves", "quantity": "1 tablespoon"}
+                ],
+                "cooking_method": "Standard Indian cooking method with tempering, sautéing and simmering."
+            }

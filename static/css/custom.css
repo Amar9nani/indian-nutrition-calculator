@@ -1,0 +1,98 @@
+/* Custom styles for the nutrition calculator */
+
+/* Main container padding */
+.container {
+    max-width: 1000px;
+    padding-bottom: 3rem;
+}
+
+/* Card styling */
+.card {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+/* Heading styles */
+h1, h2, h3 {
+    font-weight: 600;
+}
+
+/* Form control focus */
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* Dish suggestions */
+.dish-suggestions .list-group-item {
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.dish-suggestions .list-group-item:hover {
+    background-color: var(--bs-secondary-bg);
+}
+
+.dish-suggestions .bi {
+    transition: transform 0.2s ease;
+}
+
+.dish-suggestions .list-group-item:hover .bi {
+    transform: translateX(5px);
+}
+
+/* Nutrition charts */
+.nutrition-chart-container, 
+.macronutrient-ratio-container {
+    background-color: var(--bs-body-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/* Ingredients list */
+.ingredient-list .list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Button hover effects */
+.btn {
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Footer styling */
+footer {
+    border-top: 1px solid var(--bs-border-color);
+    margin-top: 2rem;
+}
+
+/* Animation for heart icon in footer */
+footer .bi-heart-fill {
+    animation: heartbeat 1.5s ease infinite;
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    .nutrition-chart-container, 
+    .macronutrient-ratio-container {
+        margin-top: 2rem;
+    }
+}

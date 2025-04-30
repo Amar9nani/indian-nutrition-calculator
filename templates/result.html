@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ dish_name }} - Nutrition Information | VYB</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header class="my-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Back
+                </a>
+                <h1 class="m-0">{{ dish_name }}</h1>
+                <div></div> <!-- Empty div for flexbox balance -->
+            </div>
+        </header>
+
+        <section class="card p-4 mb-5 shadow-sm">
+            <div class="row">
+                <div class="col-md-7">
+                    <h2 class="h3 mb-4">Nutritional Information</h2>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nutrient</th>
+                                <th>Per {{ result.dish_type }} Serving</th>
+                                <th>% Daily Value*</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set nutrition = result['estimated_nutrition_per_' ~ result.serving_size.description] %}
+                            <tr>
+                                <td><strong>Calories</strong></td>
+                                <td>{{ nutrition.calories }} kcal</td>
+                                <td>{{ (nutrition.calories / 2000 * 100) | round }}%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Protein</strong></td>
+                                <td>{{ nutrition.protein }}g</td>
+                                <td>{{ (nutrition.protein / 50 * 100) | round }}%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Carbohydrates</strong></td>
+                                <td>{{ nutrition.carbs }}g</td>
+                                <td>{{ (nutrition.carbs / 300 * 100) | round }}%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fat</strong></td>
+                                <td>{{ nutrition.fat }}g</td>
+                                <td>{{ (nutrition.fat / 65 * 100) | round }}%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Fiber</strong></td>
+                                <td>{{ nutrition.fiber }}g</td>
+                                <td>{{ (nutrition.fiber / 25 * 100) | round }}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-muted small">*Based on a 2,000 calorie diet</p>
+                    
+                    <div class="mt-4">
+                        <h3 class="h5">Serving Information</h3>
+                        <p>
+                            <i class="bi bi-cup-hot me-2"></i> 
+                            {% if result.dish_type in ['Wet Sabzi', 'Dal', 'Non-Veg Curry'] %}
+                                1 katori (approximately 180-200g)
+                            {% elif result.dish_type == 'Dry Sabzi' %}
+                                1 katori (approximately 150g)
+                            {% elif result.dish_type == 'Rice' %}
+                                1 katori (approximately 150g)
+                            {% elif result.dish_type == 'Bread' %}
+                                1 piece (approximately 30g)
+                            {% elif result.dish_type == 'Raita' %}
+                                1 small katori (approximately 100g)
+                            {% elif result.dish_type == 'Chutney' %}
+                                1 tablespoon (approximately 15g)
+                            {% else %}
+                                Standard serving
+                            {% endif %}
+                        </p>
+                        <p class="text-muted small">Dish categorized as: <strong>{{ result.dish_type }}</strong></p>
+                    </div>
+                </div>
+                
+                <div class="col-md-5">
+                    <div class="nutrition-chart-container mb-4">
+                        <canvas id="nutritionChart"></canvas>
+                    </div>
+                    
+                    <div class="macronutrient-ratio-container">
+                        <h3 class="h5 mb-3">Macronutrient Ratio</h3>
+                        <canvas id="macronutrientChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="card p-4 mb-5 shadow-sm">
+            <h2 class="h3 mb-4">Ingredients</h2>
+            <div class="row">
+                <div class="col-md-8">
+                    <ul class="list-group ingredient-list">
+                        {% for ingredient in result.ingredients_used %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>{{ ingredient.ingredient }}</span>
+                            <span class="badge bg-secondary">{{ ingredient.quantity }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        <strong>Note:</strong> Nutritional values are approximate and based on standard recipes. Individual cooking methods and ingredient proportions may vary.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center text-muted py-4 mt-5">
+            <p>Made with <i class="bi bi-heart-fill text-danger"></i> for VYB - India's Smartest Health Assistant</p>
+            <p class="small">Nutritional data is approximate and based on standard household measurements</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart colors
+            const colors = {
+                protein: '#4e73df',
+                carbs: '#1cc88a',
+                fat: '#f6c23e',
+                fiber: '#e74a3b'
+            };
+            
+            // Nutrition bar chart
+            const nutritionCtx = document.getElementById('nutritionChart');
+            const nutrientNames = ['Protein', 'Carbs', 'Fat', 'Fiber'];
+            const nutrientValues = [
+                {{ nutrition.protein }},
+                {{ nutrition.carbs }},
+                {{ nutrition.fat }},
+                {{ nutrition.fiber }}
+            ];
+            
+            new Chart(nutritionCtx, {
+                type: 'bar',
+                data: {
+                    labels: nutrientNames,
+                    datasets: [{
+                        label: 'Grams',
+                        data: nutrientValues,
+                        backgroundColor: [colors.protein, colors.carbs, colors.fat, colors.fiber],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Nutrition Profile (grams)',
+                            font: {
+                                size: 16
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Macronutrient ratio doughnut chart
+            const macroCtx = document.getElementById('macronutrientChart');
+            const totalGrams = {{ nutrition.protein + nutrition.carbs + nutrition.fat }};
+            const proteinPct = {{ (nutrition.protein / (nutrition.protein + nutrition.carbs + nutrition.fat) * 100) | round }};
+            const carbsPct = {{ (nutrition.carbs / (nutrition.protein + nutrition.carbs + nutrition.fat) * 100) | round }};
+            const fatPct = {{ (nutrition.fat / (nutrition.protein + nutrition.carbs + nutrition.fat) * 100) | round }};
+            
+            new Chart(macroCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Protein', 'Carbs', 'Fat'],
+                    datasets: [{
+                        data: [proteinPct, carbsPct, fatPct],
+                        backgroundColor: [colors.protein, colors.carbs, colors.fat],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: ${value}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
