@@ -54,7 +54,7 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
 
 2. Install dependencies:
    ```
-   pip install -r requirements.txt
+   pip install flask==2.3.3 flask-sqlalchemy==3.0.5 gunicorn==23.0.0 openai==1.11.0 psycopg2-binary==2.9.9 python-dotenv==1.0.0 email-validator==2.1.0
    ```
 
 3. Set up environment variables:
@@ -69,6 +69,14 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
    ```
 
 5. Open your browser and navigate to `http://localhost:5000`
+
+### Local Development in VS Code
+
+For detailed instructions on setting up and running the project in Visual Studio Code, see [LOCAL_DEV_GUIDE.md](LOCAL_DEV_GUIDE.md)
+
+### Deployment
+
+For detailed instructions on deploying this application to various cloud platforms, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
 
 ## Project Structure
 
