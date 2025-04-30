@@ -121,7 +121,37 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="row mt-4">
+                <div class="col-12">
+                    <h3 class="h5 mb-3">JSON Output</h3>
+                    <div class="bg-dark p-3 rounded">
+                        <pre class="text-light mb-0"><code id="jsonOutput">{{ result | tojson(indent=2) }}</code></pre>
+                    </div>
+                    <button class="btn btn-sm btn-outline-secondary mt-2" id="copyJsonBtn">
+                        <i class="bi bi-clipboard me-1"></i> Copy JSON
+                    </button>
+                </div>
+            </div>
         </section>
+        
+        <script>
+            document.getElementById('copyJsonBtn').addEventListener('click', function() {
+                const jsonText = document.getElementById('jsonOutput').textContent;
+                navigator.clipboard.writeText(jsonText)
+                    .then(() => {
+                        // Change button text temporarily
+                        const originalText = this.innerHTML;
+                        this.innerHTML = '<i class="bi bi-check-circle me-1"></i> Copied!';
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                        }, 2000);
+                    })
+                    .catch(err => {
+                        console.error('Failed to copy text: ', err);
+                    });
+            });
+        </script>
 
         <footer class="text-center text-muted py-4 mt-5">
             <p>Made with <i class="bi bi-heart-fill text-danger"></i> for VYB - India's Smartest Health Assistant</p>
