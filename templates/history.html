@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Calculation History - Indian Nutrition Calculator</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <header class="mt-4 mb-5 text-center">
+            <h1 class="display-4">Indian Nutrition Calculator</h1>
+            <p class="lead">Nutrition Calculation History</p>
+            <div class="d-flex justify-content-center">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary mt-2">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Calculator
+                </a>
+            </div>
+        </header>
+
+        <div class="row">
+            <div class="col-md-12">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category if category != 'error' else 'danger' }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Previous Nutrition Calculations</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if history %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th><i class="bi bi-card-list me-2"></i>Dish Name</th>
+                                            <th><i class="bi bi-tag me-2"></i>Type</th>
+                                            <th><i class="bi bi-fire me-2"></i>Calories</th>
+                                            <th><i class="bi bi-egg me-2"></i>Protein (g)</th>
+                                            <th><i class="bi bi-circle-square me-2"></i>Carbs (g)</th>
+                                            <th><i class="bi bi-droplet me-2"></i>Fat (g)</th>
+                                            <th><i class="bi bi-hexagon me-2"></i>Fiber (g)</th>
+                                            <th><i class="bi bi-calendar-date me-2"></i>Date</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in history %}
+                                            <tr>
+                                                <td>{{ item.dish_name }}</td>
+                                                <td>{{ item.dish_type }}</td>
+                                                <td>{{ item.calories | round(1) }}</td>
+                                                <td>{{ item.protein | round(1) }}</td>
+                                                <td>{{ item.carbs | round(1) }}</td>
+                                                <td>{{ item.fat | round(1) }}</td>
+                                                <td>{{ item.fiber | round(1) }}</td>
+                                                <td>{{ item.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                No calculation history available. Try calculating nutrition for some dishes first!
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center text-muted py-4 mt-5">
+            <p>Made with <i class="bi bi-heart-fill text-danger"></i> for VYB - India's Smartest Health Assistant</p>
+            <p class="small">Nutritional data is approximate and based on standard household measurements</p>
+            <p class="small">Contact: <a href="mailto:namarnadh.9@gmail.com">namarnadh.9@gmail.com</a></p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
