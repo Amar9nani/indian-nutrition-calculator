@@ -78,6 +78,7 @@ class NutritionCalculator:
             result = {
                 f"estimated_nutrition_per_{serving_size['description']}": nutrition_per_serving,
                 "dish_type": dish_type,
+                "serving_size": serving_size,
                 "ingredients_used": [
                     {
                         "ingredient": item['ingredient'],
