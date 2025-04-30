@@ -20,11 +20,15 @@ def index():
     """Render the main page"""
     return render_template('index.html')
 
-@app.route('/calculate', methods=['POST'])
+@app.route('/calculate', methods=['GET', 'POST'])
 def calculate_nutrition():
     """Calculate nutrition for a dish"""
     try:
-        dish_name = request.form.get('dish_name')
+        if request.method == 'POST':
+            dish_name = request.form.get('dish_name')
+        else:  # GET request
+            dish_name = request.args.get('dish_name')
+            
         if not dish_name:
             flash('Please enter a dish name', 'error')
             return render_template('index.html')
@@ -43,12 +47,15 @@ def calculate_nutrition():
         flash(f"An error occurred: {str(e)}", 'error')
         return render_template('index.html')
 
-@app.route('/api/calculate', methods=['POST'])
+@app.route('/api/calculate', methods=['GET', 'POST'])
 def api_calculate_nutrition():
     """API endpoint to calculate nutrition for a dish"""
     try:
-        data = request.get_json()
-        dish_name = data.get('dish_name')
+        if request.method == 'POST':
+            data = request.get_json() if request.is_json else request.form
+            dish_name = data.get('dish_name')
+        else:  # GET request
+            dish_name = request.args.get('dish_name')
         
         if not dish_name:
             return jsonify({"error": "Dish name is required"}), 400
