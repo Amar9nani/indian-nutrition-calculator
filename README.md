@@ -11,12 +11,13 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
 ## Features
 
 - **Instant Nutrition Calculation**: Enter any Indian dish name and get nutrition information
-- **AI-Powered Recipe Extraction**: Uses OpenAI API to extract recipe information for dishes
+- **AI-Powered Recipe Extraction**: Uses OpenAI API to extract recipe information for dishes with offline fallback
 - **Standardized Measurements**: Converts traditional Indian measurements to standard units
 - **Nutrition Analysis**: Calculates calories, protein, carbs, fat, and fiber per standard serving
 - **Visual Display**: Charts for easy interpretation of nutritional information
 - **JSON Output**: Provides structured data output for integration with other applications
-- **Calculation History**: Stores previous calculations in a database for future reference
+- **Calculation History**: Stores previous calculations in local XML storage for easy reference
+- **Zero-configuration Setup**: Works on any system without database or API key setup
 
 ## How It Works
 
@@ -31,8 +32,8 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
 
 - **Backend**: Python, Flask
 - **Frontend**: HTML, CSS, JavaScript, Bootstrap
-- **Database**: PostgreSQL
-- **API Integration**: OpenAI API for recipe extraction
+- **Data Storage**: XML-based local storage
+- **API Integration**: OpenAI API for recipe extraction (with offline fallback)
 - **Visualization**: Chart.js for nutrition data visualization
 - **Data Processing**: Custom algorithms for ingredient mapping and measurement conversion
 
@@ -41,8 +42,6 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
 ### Prerequisites
 
 - Python 3.11 or higher
-- PostgreSQL database
-- OpenAI API key
 
 ### Installation
 
@@ -57,18 +56,66 @@ The Indian Nutrition Calculator is a web application developed as part of an ass
    pip install flask==2.3.3 flask-sqlalchemy==3.0.5 gunicorn==23.0.0 openai==1.11.0 psycopg2-binary==2.9.9 python-dotenv==1.0.0 email-validator==2.1.0
    ```
 
-3. Set up environment variables:
+3. Run the application:
    ```
-   export OPENAI_API_KEY=your_openai_api_key
-   export DATABASE_URL=your_postgresql_connection_string
-   ```
-
-4. Run the application:
-   ```
-   gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app
+   flask run --host=0.0.0.0 --port=5000
+   # OR
+   python main.py
+   # OR 
+   gunicorn --bind 0.0.0.0:5000 --reload main:app
    ```
 
-5. Open your browser and navigate to `http://localhost:5000`
+4. Open your browser and navigate to `http://localhost:5000`
+
+## Running on Any System Without Errors
+
+This application is designed to work seamlessly on any local system without requiring complex setup:
+
+### Zero Configuration Setup
+
+- **No Database Required**: The application uses local XML storage instead of a database
+- **Default API Keys**: Built-in placeholder API key ensures the app works without OpenAI credentials
+- **Auto-creating Directories**: Required folders are automatically created on first run
+- **Fallback Recipes**: Pre-defined recipes for common dishes work without API access
+- **Error Handling**: Robust error handling prevents crashes from missing data
+
+### Tips for Different Operating Systems
+
+#### Windows
+```
+# Command Prompt
+set FLASK_APP=main.py
+set FLASK_DEBUG=1
+flask run --host=0.0.0.0 --port=5000
+
+# PowerShell
+$env:FLASK_APP = "main.py"
+$env:FLASK_DEBUG = 1
+flask run --host=0.0.0.0 --port=5000
+```
+
+#### macOS/Linux
+```
+export FLASK_APP=main.py
+export FLASK_DEBUG=1
+flask run --host=0.0.0.0 --port=5000
+```
+
+#### Using Python Directly (All Systems)
+```
+python main.py
+```
+
+### Optional: Adding Your OpenAI API Key
+
+While not required, you can add your own OpenAI API key for better recipe extraction:
+
+1. Create a `.env` file in the project root:
+   ```
+   OPENAI_API_KEY=your_actual_openai_key
+   ```
+
+2. Restart the application
 
 ### Local Development in VS Code
 
@@ -83,8 +130,10 @@ For detailed instructions on deploying this application to various cloud platfor
 - `app.py`: Main Flask application with route definitions
 - `nutrition_calculator.py`: Core logic for nutrition calculation
 - `data_provider.py`: Provides access to nutritional data and measurement standards
-- `recipe_fetcher.py`: Fetches recipes using OpenAI API
-- `data/`: Contains nutrition database and reference data
+- `recipe_fetcher.py`: Fetches recipes using OpenAI API with offline fallbacks
+- `xml_storage.py`: Manages local XML-based data storage
+- `main.py`: Application entry point with automatic directory creation
+- `data/`: Contains nutrition database, reference data, and XML storage files
 - `templates/`: HTML templates for the web interface
 - `static/`: CSS, JavaScript, and other static assets
 

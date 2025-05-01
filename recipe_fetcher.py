@@ -3,7 +3,14 @@ import logging
 import json
 from typing import Dict, Any, Optional
 
-from openai import OpenAI
+# Try to import OpenAI, but handle case when it's not installed
+try:
+    from openai import OpenAI
+    OPENAI_AVAILABLE = True
+except ImportError:
+    logger = logging.getLogger(__name__)
+    logger.warning("OpenAI package not available. Using fallback recipes only.")
+    OPENAI_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -12,10 +19,18 @@ class RecipeFetcher:
     
     def __init__(self):
         """Initialize the recipe fetcher with API credentials"""
+        # If OpenAI is not available, just use fallback recipes
+        if not OPENAI_AVAILABLE:
+            self.api_key = None
+            self.client = None
+            return
+            
         self.api_key = os.environ.get("OPENAI_API_KEY")
         if not self.api_key:
             logger.warning("OpenAI API key not found, using fallback data")
-        self.client = OpenAI(api_key=self.api_key) if self.api_key else None
+            self.client = None
+        else:
+            self.client = OpenAI(api_key=self.api_key)
         
     def fetch_recipe(self, dish_name: str) -> Optional[Dict[str, Any]]:
         """
