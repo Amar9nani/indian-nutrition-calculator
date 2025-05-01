@@ -5,13 +5,11 @@ This guide explains how to run the Indian Nutrition Calculator project locally i
 ## Prerequisites
 
 1. **Python**: Make sure Python 3.11 or higher is installed
-2. **PostgreSQL**: Install PostgreSQL database on your system
-3. **Git**: Install Git to clone the repository
-4. **VS Code**: Install Visual Studio Code
-5. **VS Code Extensions**: Install the following extensions:
+2. **Git**: Install Git to clone the repository
+3. **VS Code**: Install Visual Studio Code
+4. **VS Code Extensions**: Install the following extensions:
    - Python extension
    - Pylance
-   - SQLTools
 
 ## Step 1: Clone the Repository
 
@@ -40,27 +38,17 @@ source venv/bin/activate
 pip install flask==2.3.3 flask-sqlalchemy==3.0.5 gunicorn==23.0.0 openai==1.11.0 psycopg2-binary==2.9.9 python-dotenv==1.0.0 email-validator==2.1.0
 ```
 
-## Step 4: Set Up Environment Variables
+## Step 4: Set Up Environment Variables (Optional)
 
-Create a `.env` file in the root directory:
+The application has default keys, but you can create a `.env` file in the root directory to override them:
 
 ```
 OPENAI_API_KEY=your_openai_api_key
-DATABASE_URL=postgresql://username:password@localhost:5432/nutrition_calculator
-SESSION_SECRET=your_secret_key
 ```
 
-Make sure to replace placeholders with your actual values.
+If you have a real OpenAI API key, replace the placeholder above with your actual key.
 
-## Step 5: Create PostgreSQL Database
-
-Open pgAdmin or use the PostgreSQL command line:
-
-```sql
-CREATE DATABASE nutrition_calculator;
-```
-
-## Step 6: Start the Application
+## Step 5: Start the Application
 
 In the VS Code terminal with your virtual environment activated:
 

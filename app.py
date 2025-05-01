@@ -3,8 +3,8 @@ import logging
 import json
 from datetime import datetime
 from flask import Flask, render_template, request, jsonify, flash
-from flask_sqlalchemy import SQLAlchemy
 from nutrition_calculator import NutritionCalculator
+from xml_storage import XMLStorage
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -12,46 +12,14 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
-app.secret_key = os.environ.get("SESSION_SECRET", "dev_secret_key")
+app.secret_key = "indian_nutrition_calculator_secret_key"  # Default secret key
 
-# Configure database
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
-app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
-    "pool_recycle": 300,
-    "pool_pre_ping": True,
-}
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+# Add a default OpenAI API key (this is just a placeholder)
+os.environ.setdefault("OPENAI_API_KEY", "sk-placeholder-api-key")
+# If you have a real key, you can set it in your environment or replace it here
 
-# Initialize SQLAlchemy
-db = SQLAlchemy(app)
-
-# Define the model
-class NutritionRequest(db.Model):
-    """Model for storing nutrition calculation requests and results"""
-    __tablename__ = 'nutrition_requests'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    dish_name = db.Column(db.String(255), nullable=False)
-    dish_type = db.Column(db.String(100))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    
-    # Nutrition values
-    calories = db.Column(db.Float)
-    protein = db.Column(db.Float)
-    carbs = db.Column(db.Float)
-    fat = db.Column(db.Float)
-    fiber = db.Column(db.Float)
-    
-    # JSON data
-    ingredients_json = db.Column(db.Text)
-    serving_size_json = db.Column(db.Text)
-    
-    def __repr__(self):
-        return f"<NutritionRequest(dish_name='{self.dish_name}', dish_type='{self.dish_type}')>"
-
-# Initialize database
-with app.app_context():
-    db.create_all()
+# Initialize XML storage for nutrition history
+xml_storage = XMLStorage()
 
 # Initialize nutrition calculator
 nutrition_calculator = NutritionCalculator()
@@ -81,25 +49,16 @@ def calculate_nutrition():
             flash('Could not calculate nutrition for this dish. Please try another dish.', 'error')
             return render_template('index.html')
         
-        # Save the result to the database
+        # Add dish_name to the result for storage
+        result['dish_name'] = dish_name
+        
+        # Save the result to XML storage
         try:
-            nutrition_request = NutritionRequest(
-                dish_name=dish_name,
-                dish_type=result.get('dish_type', ''),
-                calories=result.get('nutrition_per_serving', {}).get('calories', 0),
-                protein=result.get('nutrition_per_serving', {}).get('protein', 0),
-                carbs=result.get('nutrition_per_serving', {}).get('carbs', 0),
-                fat=result.get('nutrition_per_serving', {}).get('fat', 0),
-                fiber=result.get('nutrition_per_serving', {}).get('fiber', 0),
-                ingredients_json=json.dumps(result.get('ingredients', [])),
-                serving_size_json=json.dumps(result.get('serving_size', {}))
-            )
-            db.session.add(nutrition_request)
-            db.session.commit()
-            logger.info(f"Saved nutrition data for {dish_name} to database")
-        except Exception as db_error:
-            logger.error(f"Error saving to database: {str(db_error)}")
-            # Continue processing even if database save fails
+            xml_storage.save_nutrition_request(result)
+            logger.info(f"Saved nutrition data for {dish_name} to XML storage")
+        except Exception as storage_error:
+            logger.error(f"Error saving to XML storage: {str(storage_error)}")
+            # Continue processing even if storage save fails
             
         return render_template('result.html', result=result, dish_name=dish_name)
         
@@ -126,25 +85,16 @@ def api_calculate_nutrition():
         if not result:
             return jsonify({"error": "Could not calculate nutrition for this dish"}), 404
         
-        # Save the result to the database
+        # Add dish_name to the result for storage
+        result['dish_name'] = dish_name
+        
+        # Save the result to XML storage
         try:
-            nutrition_request = NutritionRequest(
-                dish_name=dish_name,
-                dish_type=result.get('dish_type', ''),
-                calories=result.get('nutrition_per_serving', {}).get('calories', 0),
-                protein=result.get('nutrition_per_serving', {}).get('protein', 0),
-                carbs=result.get('nutrition_per_serving', {}).get('carbs', 0),
-                fat=result.get('nutrition_per_serving', {}).get('fat', 0),
-                fiber=result.get('nutrition_per_serving', {}).get('fiber', 0),
-                ingredients_json=json.dumps(result.get('ingredients', [])),
-                serving_size_json=json.dumps(result.get('serving_size', {}))
-            )
-            db.session.add(nutrition_request)
-            db.session.commit()
-            logger.info(f"Saved nutrition data for {dish_name} to database (API request)")
-        except Exception as db_error:
-            logger.error(f"Error saving to database (API request): {str(db_error)}")
-            # Continue processing even if database save fails
+            xml_storage.save_nutrition_request(result)
+            logger.info(f"Saved nutrition data for {dish_name} to XML storage (API request)")
+        except Exception as storage_error:
+            logger.error(f"Error saving to XML storage (API request): {str(storage_error)}")
+            # Continue processing even if storage save fails
             
         return jsonify(result)
         
@@ -156,8 +106,8 @@ def api_calculate_nutrition():
 def view_history():
     """View history of nutrition calculations"""
     try:
-        # Fetch all records from the database, ordered by most recent first
-        nutrition_history = NutritionRequest.query.order_by(NutritionRequest.created_at.desc()).all()
+        # Fetch all records from XML storage
+        nutrition_history = xml_storage.get_all_nutrition_requests()
         return render_template('history.html', history=nutrition_history)
     except Exception as e:
         logger.error(f"Error fetching history: {str(e)}")
