@@ -78,6 +78,23 @@ This application is designed to work seamlessly on any local system without requ
 - **Auto-creating Directories**: Required folders are automatically created on first run
 - **Fallback Recipes**: Pre-defined recipes for common dishes work without API access
 - **Error Handling**: Robust error handling prevents crashes from missing data
+- **OpenAI Version Compatibility**: Automatically handles OpenAI library version differences
+
+### Fixing Common Errors
+
+If you encounter an error related to the OpenAI library (like `TypeError: Client.__init__() got an unexpected keyword argument 'proxies'`), you can:
+
+1. **Option 1**: Do nothing! The application will automatically detect version issues and use pre-defined recipe data instead.
+
+2. **Option 2**: Update your OpenAI library:
+   ```
+   pip install openai==1.11.0
+   ```
+
+3. **Option 3**: Run with `--no-openai` flag to completely disable OpenAI integration:
+   ```
+   python main.py --no-openai
+   ```
 
 ### Tips for Different Operating Systems
 

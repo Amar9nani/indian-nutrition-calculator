@@ -1,0 +1,50 @@
+$ flask run --host=0.0.0.0 --port=5000 
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "C:\Users\user\anaconda3\Scripts\flask.exe\__main__.py", line 7, in <module>
+  File "C:\Users\user\anaconda3\Lib\site-packages\flask\cli.py", line 1064, in main
+    cli.main()
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\core.py", line 1082, in main
+    rv = self.invoke(ctx)
+         ^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\core.py", line 1697, in invoke
+    return _process_result(sub_ctx.command.invoke(sub_ctx))
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\core.py", line 1443, in invoke
+    return ctx.invoke(self.callback, **ctx.params)     
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^     
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\decorators.py", line 92, in new_func
+    return ctx.invoke(f, obj, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\click\core.py", line 788, in invoke
+    return __callback(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\flask\cli.py", line 912, in run_command
+    raise e from None
+  File "C:\Users\user\anaconda3\Lib\site-packages\flask\cli.py", line 898, in run_command
+    app = info.load_app()
+          ^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\flask\cli.py", line 313, in load_app
+    app = locate_app(import_name, None, raise_if_not_found=False)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\flask\cli.py", line 219, in locate_app
+    __import__(module_name)
+  File "C:\Users\user\Downloads\VybAiAnalyzer\VybAiAnalyzer\app.py", line 25, in <module>
+    nutrition_calculator = NutritionCalculator()       
+                           ^^^^^^^^^^^^^^^^^^^^^       
+  File "C:\Users\user\Downloads\VybAiAnalyzer\VybAiAnalyzer\nutrition_calculator.py", line 17, in __init__    
+    self.recipe_fetcher = RecipeFetcher()
+                          ^^^^^^^^^^^^^^^
+  File "C:\Users\user\Downloads\VybAiAnalyzer\VybAiAnalyzer\recipe_fetcher.py", line 33, in __init__
+    self.client = OpenAI(api_key=self.api_key)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\user\anaconda3\Lib\site-packages\openai\_client.py", line 112, in __init__
+    super().__init__(
+  File "C:\Users\user\anaconda3\Lib\site-packages\openai\_base_client.py", line 793, in __init__
+    self._client = http_client or SyncHttpxClientWrapper(
+                                  ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: Client.__init__() got an unexpected keyword argument 'proxies'

@@ -3,34 +3,56 @@ import logging
 import json
 from typing import Dict, Any, Optional
 
-# Try to import OpenAI, but handle case when it's not installed
-try:
-    from openai import OpenAI
-    OPENAI_AVAILABLE = True
-except ImportError:
-    logger = logging.getLogger(__name__)
-    logger.warning("OpenAI package not available. Using fallback recipes only.")
-    OPENAI_AVAILABLE = False
-
+# Initialize logger first
 logger = logging.getLogger(__name__)
+
+# Check if OpenAI integration is explicitly disabled
+if os.environ.get("DISABLE_OPENAI") == "1":
+    logger.warning("OpenAI integration explicitly disabled. Using fallback recipes only.")
+    OPENAI_AVAILABLE = False
+else:
+    # Try to import OpenAI, but handle case when it's not installed or has version issues
+    try:
+        from openai import OpenAI
+        # Test create a client to check for compatibility issues
+        try:
+            test_client = OpenAI(api_key="test_key")
+            OPENAI_AVAILABLE = True
+        except TypeError:
+            # Handle the specific TypeError with 'proxies' argument
+            logger.warning("OpenAI package version incompatibility. Using fallback recipes only.")
+            OPENAI_AVAILABLE = False
+        except Exception:
+            # Handle any other exception during test initialization
+            logger.warning("OpenAI initialization failed. Using fallback recipes only.")
+            OPENAI_AVAILABLE = False
+    except ImportError:
+        logger.warning("OpenAI package not available. Using fallback recipes only.")
+        OPENAI_AVAILABLE = False
 
 class RecipeFetcher:
     """Class to fetch recipes using OpenAI API"""
     
     def __init__(self):
         """Initialize the recipe fetcher with API credentials"""
-        # If OpenAI is not available, just use fallback recipes
+        # Always initialize these variables
+        self.api_key = None
+        self.client = None
+        
+        # If OpenAI is not available or has compatibility issues, just use fallback recipes
         if not OPENAI_AVAILABLE:
-            self.api_key = None
-            self.client = None
             return
             
         self.api_key = os.environ.get("OPENAI_API_KEY")
         if not self.api_key:
             logger.warning("OpenAI API key not found, using fallback data")
-            self.client = None
         else:
-            self.client = OpenAI(api_key=self.api_key)
+            try:
+                self.client = OpenAI(api_key=self.api_key)
+            except Exception as e:
+                # Log any exceptions and fall back to sample recipes
+                logger.error(f"Error initializing OpenAI client: {str(e)}")
+                self.client = None
         
     def fetch_recipe(self, dish_name: str) -> Optional[Dict[str, Any]]:
         """
