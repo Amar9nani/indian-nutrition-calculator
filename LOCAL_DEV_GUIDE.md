@@ -60,7 +60,7 @@ flask run --host=0.0.0.0 --port=5000
 gunicorn --bind 0.0.0.0:5000 --reload main:app
 ```
 
-## Step 7: Access the Application
+## Step 6: Access the Application
 
 Open your browser and navigate to:
 
@@ -100,12 +100,20 @@ http://localhost:5000
 2. Set breakpoints in your code
 3. Start debugging by pressing F5 or clicking the green play button in the Run and Debug panel
 
+## XML Storage
+
+This app uses XML files to store nutrition history. The storage is located in the `data` directory:
+
+- `data/nutrition_history.xml`: Stores all nutrition calculations
+
+The XML storage automatically creates this file if it doesn't exist, so no special setup is required. The application handles all reading and writing to this file.
+
 ## Troubleshooting
 
-- **Database Connection Issues**: Ensure PostgreSQL is running and your credentials are correct in the `.env` file
 - **Module Not Found Errors**: Make sure you've installed all dependencies and activated your virtual environment
-- **OpenAI API Errors**: Verify your API key is valid and you have sufficient quota
+- **OpenAI API Errors**: If you see API rate limits or connection errors, this is likely because the default placeholder API key is being used. Add your own OpenAI API key to the `.env` file
 - **Port Already in Use**: Change the port number in your run command if 5000 is already in use
+- **File Permission Issues**: If you encounter errors related to writing XML files, check that your application has write permissions to the `data` directory
 
 ## Key Files
 

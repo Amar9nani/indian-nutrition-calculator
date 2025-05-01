@@ -79,23 +79,54 @@ class XMLStorage:
             
             entries = []
             for entry in root.findall('entry'):
+                # Safe getters to handle potentially missing elements
+                def safe_get_text(element_path):
+                    element = entry.find(element_path)
+                    return element.text if element is not None else ""
+                
+                def safe_get_float(element_path, default=0.0):
+                    element = entry.find(element_path)
+                    if element is not None and element.text:
+                        try:
+                            return float(element.text)
+                        except (ValueError, TypeError):
+                            return default
+                    return default
+                
+                def safe_get_int(element_path, default=0):
+                    element = entry.find(element_path)
+                    if element is not None and element.text:
+                        try:
+                            return int(element.text)
+                        except (ValueError, TypeError):
+                            return default
+                    return default
+                
+                # Parse created_at date safely
+                created_at_str = safe_get_text('created_at')
+                try:
+                    created_at = datetime.fromisoformat(created_at_str) if created_at_str else None
+                except (ValueError, TypeError):
+                    created_at = None
+                
                 entry_data = {
-                    'id': int(entry.find('id').text),
-                    'dish_name': entry.find('dish_name').text,
-                    'dish_type': entry.find('dish_type').text,
-                    'created_at': datetime.fromisoformat(entry.find('created_at').text),
-                    'calories': float(entry.find('nutrition_values/calories').text),
-                    'protein': float(entry.find('nutrition_values/protein').text),
-                    'carbs': float(entry.find('nutrition_values/carbs').text),
-                    'fat': float(entry.find('nutrition_values/fat').text),
-                    'fiber': float(entry.find('nutrition_values/fiber').text),
-                    'ingredients_json': entry.find('ingredients_json').text,
-                    'serving_size_json': entry.find('serving_size_json').text,
+                    'id': safe_get_int('id'),
+                    'dish_name': safe_get_text('dish_name'),
+                    'dish_type': safe_get_text('dish_type'),
+                    'created_at': created_at,
+                    'calories': safe_get_float('nutrition_values/calories'),
+                    'protein': safe_get_float('nutrition_values/protein'),
+                    'carbs': safe_get_float('nutrition_values/carbs'),
+                    'fat': safe_get_float('nutrition_values/fat'),
+                    'fiber': safe_get_float('nutrition_values/fiber'),
+                    'ingredients_json': safe_get_text('ingredients_json'),
+                    'serving_size_json': safe_get_text('serving_size_json'),
                 }
                 entries.append(entry_data)
             
             # Sort by created_at in descending order (newest first)
-            entries.sort(key=lambda x: x['created_at'], reverse=True)
+            # If created_at is None, put at the end
+            entries.sort(key=lambda x: (x['created_at'] is None, x['created_at'] or datetime.min), reverse=True)
             return entries
         except Exception as e:
             print(f"Error retrieving nutrition history: {e}")

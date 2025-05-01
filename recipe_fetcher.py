@@ -162,7 +162,7 @@ class RecipeFetcher:
                 ],
                 "cooking_method": "Sauté cumin seeds, onions, add ginger-garlic, tomatoes, spices, potatoes and cauliflower florets. Cover and cook till vegetables are tender."
             }
-        elif 'biryani' in dish_name_lower:
+        elif 'biryani' in dish_name_lower or 'chicken biryani' in dish_name_lower:
             return {
                 "ingredients": [
                     {"name": "Basmati Rice", "quantity": "2 cups"},
@@ -182,6 +182,145 @@ class RecipeFetcher:
                     {"name": "Salt", "quantity": "to taste"}
                 ],
                 "cooking_method": "Marinate chicken with yogurt and spices. Cook rice separately. Layer rice and chicken masala, dum cook on low heat."
+            }
+        elif 'palak paneer' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Paneer", "quantity": "250g"},
+                    {"name": "Spinach", "quantity": "500g"},
+                    {"name": "Onion", "quantity": "1 medium"},
+                    {"name": "Tomato", "quantity": "1 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Garlic", "quantity": "4 cloves"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Cream", "quantity": "2 tablespoons"},
+                    {"name": "Butter", "quantity": "1 tablespoon"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/4 teaspoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"}
+                ],
+                "cooking_method": "Blanch spinach and blend to paste. Sauté cumin, onions, ginger-garlic paste, tomatoes, spices. Add spinach paste, simmer, add paneer cubes and cream."
+            }
+        elif 'chole' in dish_name_lower or 'chana masala' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Chickpeas", "quantity": "2 cups"},
+                    {"name": "Onion", "quantity": "2 medium"},
+                    {"name": "Tomato", "quantity": "3 medium"},
+                    {"name": "Ginger", "quantity": "1.5 inch piece"},
+                    {"name": "Garlic", "quantity": "6 cloves"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Oil", "quantity": "3 tablespoons"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Bay Leaf", "quantity": "2"},
+                    {"name": "Cinnamon Stick", "quantity": "1 inch"},
+                    {"name": "Cloves", "quantity": "3"},
+                    {"name": "Cardamom", "quantity": "2"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Coriander Powder", "quantity": "2 teaspoons"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Amchur Powder", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Coriander Leaves", "quantity": "2 tablespoons"}
+                ],
+                "cooking_method": "Soak and pressure cook chickpeas. Sauté whole spices, add onions, ginger-garlic paste, tomatoes, ground spices. Add chickpeas and simmer."
+            }
+        elif 'tandoori chicken' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Chicken", "quantity": "1 kg"},
+                    {"name": "Yogurt", "quantity": "1 cup"},
+                    {"name": "Lemon Juice", "quantity": "2 tablespoons"},
+                    {"name": "Ginger", "quantity": "1.5 inch piece"},
+                    {"name": "Garlic", "quantity": "8 cloves"},
+                    {"name": "Tandoori Masala", "quantity": "3 tablespoons"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Mustard Oil", "quantity": "2 tablespoons"},
+                    {"name": "Salt", "quantity": "to taste"}
+                ],
+                "cooking_method": "Make cuts in chicken pieces. Prepare marinade with yogurt, spices, ginger-garlic paste. Marinate chicken for 4+ hours. Bake or grill until cooked."
+            }
+        elif 'samosa' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "All-Purpose Flour", "quantity": "2 cups"},
+                    {"name": "Potato", "quantity": "3 medium"},
+                    {"name": "Green Peas", "quantity": "1/2 cup"},
+                    {"name": "Onion", "quantity": "1 medium"},
+                    {"name": "Ginger", "quantity": "1 inch piece"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Coriander Leaves", "quantity": "2 tablespoons"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Coriander Powder", "quantity": "1 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1/2 teaspoon"},
+                    {"name": "Amchur Powder", "quantity": "1 teaspoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Oil", "quantity": "3 tablespoons"},
+                    {"name": "Ghee", "quantity": "3 tablespoons"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Oil for frying", "quantity": "as needed"}
+                ],
+                "cooking_method": "Make dough with flour, oil, salt. Prepare filling with boiled potatoes, peas, spices. Make cone-shaped samosas, fill and seal. Deep fry until golden brown."
+            }
+        elif 'butter chicken' in dish_name_lower or 'murgh makhani' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Chicken", "quantity": "750g"},
+                    {"name": "Butter", "quantity": "4 tablespoons"},
+                    {"name": "Cream", "quantity": "4 tablespoons"},
+                    {"name": "Yogurt", "quantity": "1/2 cup"},
+                    {"name": "Tomato", "quantity": "5 medium"},
+                    {"name": "Onion", "quantity": "2 medium"},
+                    {"name": "Ginger", "quantity": "2 inch piece"},
+                    {"name": "Garlic", "quantity": "8 cloves"},
+                    {"name": "Green Chilli", "quantity": "3"},
+                    {"name": "Kashmiri Red Chilli Powder", "quantity": "2 teaspoons"},
+                    {"name": "Garam Masala", "quantity": "1.5 teaspoons"},
+                    {"name": "Cumin Powder", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Kasoori Methi", "quantity": "1 tablespoon"},
+                    {"name": "Sugar", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Oil", "quantity": "2 tablespoons"}
+                ],
+                "cooking_method": "Marinate chicken with yogurt and spices. Grill/roast chicken. Prepare gravy with butter, tomatoes, onions, spices. Add cream and cooked chicken."
+            }
+        elif 'dosa' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Rice", "quantity": "3 cups"},
+                    {"name": "Urad Dal", "quantity": "1 cup"},
+                    {"name": "Fenugreek Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Oil", "quantity": "as needed"}
+                ],
+                "cooking_method": "Soak rice, urad dal, fenugreek seeds separately. Grind to smooth batter. Ferment overnight. Make thin crepes on hot griddle."
+            }
+        elif 'rajma' in dish_name_lower:
+            return {
+                "ingredients": [
+                    {"name": "Kidney Beans", "quantity": "2 cups"},
+                    {"name": "Onion", "quantity": "2 medium"},
+                    {"name": "Tomato", "quantity": "3 medium"},
+                    {"name": "Ginger", "quantity": "1.5 inch piece"},
+                    {"name": "Garlic", "quantity": "6 cloves"},
+                    {"name": "Green Chilli", "quantity": "2"},
+                    {"name": "Cumin Seeds", "quantity": "1 teaspoon"},
+                    {"name": "Bay Leaf", "quantity": "1"},
+                    {"name": "Coriander Powder", "quantity": "1 tablespoon"},
+                    {"name": "Red Chilli Powder", "quantity": "1 teaspoon"},
+                    {"name": "Turmeric Powder", "quantity": "1/2 teaspoon"},
+                    {"name": "Garam Masala", "quantity": "1 teaspoon"},
+                    {"name": "Oil", "quantity": "3 tablespoons"},
+                    {"name": "Salt", "quantity": "to taste"},
+                    {"name": "Coriander Leaves", "quantity": "2 tablespoons"}
+                ],
+                "cooking_method": "Soak and pressure cook kidney beans. Sauté cumin seeds, bay leaf, onions, ginger-garlic paste, tomatoes, spices. Add cooked beans and simmer."
             }
         else:
             # Generic recipe for unknown dishes
