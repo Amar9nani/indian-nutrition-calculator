@@ -1,0 +1,28 @@
+# Development files
+.git
+__pycache__
+*.pyc
+.env
+.env.local
+.venv
+venv/
+ENV/
+
+# Local data files
+data/*.xml
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Docker files
+Dockerfile
+docker-compose.yml
+
+# Unnecessary for deployment
+README.md
+LICENSE
+*.md
+!vercel_requirements.txt
